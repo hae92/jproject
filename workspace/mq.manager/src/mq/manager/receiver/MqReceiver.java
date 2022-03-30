@@ -10,19 +10,23 @@ import com.rabbitmq.client.DeliverCallback;
 
 public class MqReceiver {
 	
-	public static void WaitMessage() throws IOException, TimeoutException {
-		ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+	public static void WaitMessage(Channel channel, String mqName) throws IOException, TimeoutException {
+		
+		try { 
+	        channel.queueDeclare(mqName, false, false, false, null);
+	        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
-        channel.queueDeclare("hello1", false, false, false, null);
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody());
-            System.out.println(" [x] Received '" + message + "'");
-        };
-        channel.basicConsume("hello1", true, deliverCallback, consumerTag -> { });
+	        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+	        	String logText = "";
+	            String message = new String(delivery.getBody());
+	            
+	            logText = String.format("[Channel Number %d] Dequeue Object : %s", channel.getChannelNumber(), message);
+	            System.out.println(logText);
+	        };
+	        channel.basicConsume(mqName, true, deliverCallback, consumerTag -> { });			
+		}
+		catch(Exception ex) {
+			System.out.println(ex.toString());
+		}
 	}
 }
