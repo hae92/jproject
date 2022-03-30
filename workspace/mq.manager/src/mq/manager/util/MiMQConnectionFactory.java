@@ -31,18 +31,40 @@ public class MiMQConnectionFactory {
 	public Boolean addHost(String ip) {
 		String logText = "";
 		Boolean result = false;
+		// Connection Factory 당 Host는 1개만 존재할 수 있음
 		_connectionFactory.setHost(ip);
-		
+	
 		logText = String.format("Add Host IP : %s", ip);
 		System.out.println(logText);
 		
 		return result;
 	}
 	
+	public void getFactoryProperties() {
+		for(String key : _connectionFactory.getClientProperties().keySet()) {
+			var propsValue = _connectionFactory.getClientProperties().get(key);
+			String logText = "";
+			logText = String.format("%s : %s", key, propsValue.toString());
+			System.out.println(logText);
+		}
+	}
+	
+	public void Test() { 
+		
+	}
+	
+	
+	public void getConnectionFactoryHostName() {
+		String logText = "";
+		String hostName = _connectionFactory.getHost();
+		
+		logText = String.format("Host Name : %s", hostName);
+		System.out.println(logText);
+	}
+	
 	public Connection getConnection() throws IOException, TimeoutException {
 		String logText = "";
 		_connection = _connectionFactory.newConnection();
-		//_connection.getClientProperties()
 		
 		logText = String.format("Add Connection : %s", _connection.getAddress());
 		System.out.println(logText);
@@ -106,84 +128,8 @@ public class MiMQConnectionFactory {
 		}
 	}
 	
-	
-//	private ArrayList DuplicationRemovedSort(ArrayList source, String[] args) {
-//		
-//		ArrayList origin = new ArrayList();
-//		ArrayList jsonArray = null;
-//		
-//		for(int keyIndex = 0; keyIndex < args.length; keyIndex++)
-//		{
-//			HashMap<String, String> duplicationRemovedData = new HashMap<String, String>();
-//			
-//			String argKey = args[keyIndex];
-//			
-//			jsonArray = (origin.size() == 0) ? source : origin;
-//			origin = new ArrayList();
-//			
-//			int arrayCount = 10;
-//			for(int i = 0; i < arrayCount; i++) { // jsonArray
-//				String key = "jsonArray[i][argKey]"; //jsonArray[i][argKey]
-//				
-//				if(!duplicationRemovedData.containsKey(key)) {
-//					// 중복되지 않는 Key 만 저장
-//					origin.add("jsonArray[i]"); // jsonArray[i]
-//				}
-//				else {
-//					continue;
-//				}
-//			}
-//		}
-//		
-//		return origin;
-//	}
-//	
-//	
-//	
-//	private HashMap<String, String> duplicationRemovedData = new HashMap<String, String>();
-//	public void Test() {
-//		
-//		int arrayCount = 10;
-//		ArrayList arr = new ArrayList();
-//
-//		for(int i = 0; i < arrayCount; i++) {
-//			String mcdValue = ""; // jsonArray[i]["MCD"]
-//			String mnmValue = ""; // jsonArray[i]["MNM"]
-//			
-//			addData(mcdValue, mnmValue);
-//		}
-//	}
-//	
-//	public void addData(String mcdKey, String mnmKey)
-//	{
-//		// Key 값 없을 때 최초 1회 저장
-//		if(duplicationRemovedData.containsKey(mcdKey) == false) {
-//			duplicationRemovedData.put(mcdKey, mnmKey);
-//		}
-//	}
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public void dispose() throws IOException, TimeoutException {
+		_channel.close();
+		_connection.close();
+	}
 }
